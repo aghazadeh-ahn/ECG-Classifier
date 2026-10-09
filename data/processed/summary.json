@@ -1,0 +1,21 @@
+{
+  "n_records": 8528,
+  "target_samples": 18300,
+  "beat_samples": 180,
+  "atrial_samples": 90,
+  "sampling_rate": 300,
+  "n_inverted": 1988,
+  "labels": {
+    "N": 5076,
+    "A": 758,
+    "O": 2415,
+    "~": 279
+  },
+  "split": {
+    "seed": 42,
+    "test_size": 0.2,
+    "n_folds": 5
+  },
+  "n_test": 1706,
+  "n_trainval": 6822
+}

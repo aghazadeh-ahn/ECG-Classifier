@@ -15,6 +15,7 @@ from torch.utils.data import DataLoader, Dataset
 from ecgcls.augment import augment_signal
 from ecgcls.metrics import CLASSES, challenge_f1, confusion, per_class_f1, report_rows
 from ecgcls.models.cnn import Cnn1d, parameter_count
+from ecgcls.models.dilated_resnet import DilatedResNet
 from ecgcls.plots import save_classification_report, save_confusion, save_curve
 
 
@@ -106,14 +107,22 @@ def class_weights(labels: np.ndarray, indices: np.ndarray) -> torch.Tensor:
     return torch.tensor(weights, dtype=torch.float32)
 
 
-def build_model(model_cfg: dict) -> Cnn1d:
-    if model_cfg["name"] != "cnn1d":
-        raise ValueError(f"This entry point only trains cnn1d, got {model_cfg['name']}")
-    return Cnn1d(
-        channels=[int(channel) for channel in model_cfg["channels"]],
-        kernels=[int(kernel) for kernel in model_cfg["kernels"]],
-        dropout=float(model_cfg["dropout"]),
-    )
+def build_model(model_cfg: dict) -> nn.Module:
+    name = model_cfg["name"]
+    dropout = float(model_cfg["dropout"])
+    if name == "cnn1d":
+        return Cnn1d(
+            channels=[int(channel) for channel in model_cfg["channels"]],
+            kernels=[int(kernel) for kernel in model_cfg["kernels"]],
+            dropout=dropout,
+        )
+    if name == "dilated_resnet":
+        return DilatedResNet(
+            channels=[int(channel) for channel in model_cfg["channels"]],
+            dilations=[int(dilation) for dilation in model_cfg["dilations"]],
+            dropout=dropout,
+        )
+    raise ValueError(f"Unknown model: {name}")
 
 
 def run_experiment(root: Path, cfg: dict) -> dict:

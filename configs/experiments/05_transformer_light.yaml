@@ -1,0 +1,24 @@
+name: 05_transformer_light
+processed_dir: data/processed
+seed: 42
+train:
+  epochs: 100
+  patience: 20
+  batch_size: 16
+  lr: 0.001
+  min_lr: 1.0e-6
+  weight_decay: 0.0001
+augment:
+  noise_std: 0.05
+  cutout_seconds: 0.5
+  stretch: 0.05
+  scale_min: 0.9
+  scale_max: 1.1
+model:
+  name: signal_transformer
+  stem_channels: [16, 32, 64, 64, 64]
+  d_model: 64
+  nhead: 4
+  num_layers: 2
+  dim_feedforward: 128
+  dropout: 0.2

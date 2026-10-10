@@ -16,6 +16,7 @@ from ecgcls.augment import augment_signal
 from ecgcls.metrics import CLASSES, challenge_f1, confusion, per_class_f1, report_rows
 from ecgcls.models.cnn import Cnn1d, parameter_count
 from ecgcls.models.dilated_resnet import DilatedResNet
+from ecgcls.models.transformer import SignalTransformer
 from ecgcls.plots import save_classification_report, save_confusion, save_curve
 
 
@@ -120,6 +121,15 @@ def build_model(model_cfg: dict) -> nn.Module:
         return DilatedResNet(
             channels=[int(channel) for channel in model_cfg["channels"]],
             dilations=[int(dilation) for dilation in model_cfg["dilations"]],
+            dropout=dropout,
+        )
+    if name == "signal_transformer":
+        return SignalTransformer(
+            stem_channels=[int(channel) for channel in model_cfg["stem_channels"]],
+            d_model=int(model_cfg["d_model"]),
+            nhead=int(model_cfg["nhead"]),
+            num_layers=int(model_cfg["num_layers"]),
+            dim_feedforward=int(model_cfg["dim_feedforward"]),
             dropout=dropout,
         )
     raise ValueError(f"Unknown model: {name}")

@@ -15,6 +15,12 @@ def test_light_cnn_has_about_one_hundred_thousand_parameters():
     assert 80_000 <= parameter_count(model) <= 150_000
 
 
+def test_heavy_cnn_stays_under_one_million_parameters():
+    model = Cnn1d(channels=[64, 128, 256, 384, 384], kernels=[7, 5, 5, 3, 3], dropout=0.2)
+    count = parameter_count(model)
+    assert 800_000 <= count <= 1_000_000
+
+
 def test_forward_returns_four_class_logits():
     model = Cnn1d(channels=[32, 64, 128, 128], kernels=[7, 5, 5, 3], dropout=0.0)
     model.eval()

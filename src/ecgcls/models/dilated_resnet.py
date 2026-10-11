@@ -53,13 +53,15 @@ class DilatedResNet(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.head = nn.Linear(channels[-1], 4)
 
-    def forward(self, signal: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+    def embed(self, signal: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
         values = self.stem(signal.unsqueeze(1))
         mask = _resize_mask(mask, values.shape[-1])
         for stage in self.stages:
             values, mask = stage(values, mask)
-        pooled = _masked_mean(values, mask)
-        return self.head(self.dropout(pooled))
+        return _masked_mean(values, mask)
+
+    def forward(self, signal: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+        return self.head(self.dropout(self.embed(signal, mask)))
 
 
 def _resize_mask(mask: torch.Tensor, length: int) -> torch.Tensor:

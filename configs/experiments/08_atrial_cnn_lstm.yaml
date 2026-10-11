@@ -1,0 +1,23 @@
+name: 08_atrial_cnn_lstm
+processed_dir: data/processed
+seed: 42
+train:
+  epochs: 100
+  patience: 20
+  batch_size: 16
+  lr: 0.001
+  min_lr: 1.0e-6
+  weight_decay: 0.0001
+augment:
+  noise_std: 0.05
+  cutout_seconds: 0.5
+  stretch: 0.05
+  scale_min: 0.9
+  scale_max: 1.1
+model:
+  name: atrial_cnn_lstm
+  channels: [16, 32, 32]
+  kernels: [7, 5, 3]
+  lstm_hidden: 64
+  lstm_layers: 1
+  dropout: 0.2

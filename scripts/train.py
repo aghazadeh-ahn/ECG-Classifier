@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from ecgcls.train_atrial import run_atrial_experiment
 from ecgcls.train_beats import run_beat_experiment
 from ecgcls.train_signal import load_experiment, run_experiment
 
@@ -17,8 +18,11 @@ def main() -> None:
     if not config_path.is_absolute():
         config_path = ROOT / config_path
     cfg = load_experiment(config_path)
-    if cfg["model"]["name"] == "beat_cnn":
+    name = cfg["model"]["name"]
+    if name == "beat_cnn":
         run_beat_experiment(ROOT, cfg)
+    elif name == "atrial_cnn_lstm":
+        run_atrial_experiment(ROOT, cfg)
     else:
         run_experiment(ROOT, cfg)
 

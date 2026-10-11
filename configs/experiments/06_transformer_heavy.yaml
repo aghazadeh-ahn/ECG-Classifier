@@ -1,0 +1,24 @@
+name: 06_transformer_heavy
+processed_dir: data/processed
+seed: 42
+train:
+  epochs: 100
+  patience: 20
+  batch_size: 16
+  lr: 0.001
+  min_lr: 1.0e-6
+  weight_decay: 0.0001
+augment:
+  noise_std: 0.05
+  cutout_seconds: 0.5
+  stretch: 0.05
+  scale_min: 0.9
+  scale_max: 1.1
+model:
+  name: signal_transformer
+  stem_channels: [32, 64, 128, 128, 128]
+  d_model: 128
+  nhead: 4
+  num_layers: 3
+  dim_feedforward: 512
+  dropout: 0.2

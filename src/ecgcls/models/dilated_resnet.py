@@ -53,11 +53,15 @@ class DilatedResNet(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.head = nn.Linear(channels[-1], 4)
 
-    def embed(self, signal: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+    def feature_map(self, signal: torch.Tensor, mask: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         values = self.stem(signal.unsqueeze(1))
         mask = _resize_mask(mask, values.shape[-1])
         for stage in self.stages:
             values, mask = stage(values, mask)
+        return values, mask
+
+    def embed(self, signal: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+        values, mask = self.feature_map(signal, mask)
         return _masked_mean(values, mask)
 
     def forward(self, signal: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
@@ -73,7 +77,19 @@ def _resize_mask(mask: torch.Tensor, length: int) -> torch.Tensor:
 
 
 def _masked_mean(values: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+    weights = _mask_weights(values, mask)
+    return (values * weights).sum(dim=-1) / weights.sum(dim=-1).clamp(min=1.0)
+
+
+def _masked_max(values: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+    weights = _mask_weights(values, mask)
+    filled = values.masked_fill(weights < 0.5, torch.finfo(values.dtype).min)
+    maximum = filled.max(dim=-1).values
+    valid = weights.sum(dim=-1) > 0
+    return torch.where(valid, maximum, torch.zeros_like(maximum))
+
+
+def _mask_weights(values: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
     if mask.dim() == 2:
         mask = mask.unsqueeze(1)
-    weights = _resize_mask(mask, values.shape[-1]).to(dtype=values.dtype)
-    return (values * weights).sum(dim=-1) / weights.sum(dim=-1).clamp(min=1.0)
+    return _resize_mask(mask, values.shape[-1]).to(dtype=values.dtype)

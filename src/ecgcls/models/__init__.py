@@ -3,6 +3,7 @@
 from ecgcls.models.atrial import AtrialCnnLstm
 from ecgcls.models.beat import BeatCnn
 from ecgcls.models.cnn import Cnn1d, parameter_count
+from ecgcls.models.dilated_boundary import DilatedBoundary
 from ecgcls.models.dilated_meanmax import DilatedMeanMax
 from ecgcls.models.dilated_outlier import DilatedOutlier
 from ecgcls.models.dilated_resnet import DilatedResNet
@@ -13,6 +14,7 @@ __all__ = [
     "AtrialCnnLstm",
     "BeatCnn",
     "Cnn1d",
+    "DilatedBoundary",
     "DilatedMeanMax",
     "DilatedOutlier",
     "DilatedResNet",

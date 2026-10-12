@@ -11,6 +11,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from ecgcls.train_atrial import run_atrial_experiment
 from ecgcls.train_beats import run_beat_experiment
 from ecgcls.train_meanmax import run_meanmax_experiment
+from ecgcls.train_outlier import run_outlier_experiment
 from ecgcls.train_rhythm import run_rhythm_experiment
 from ecgcls.train_signal import load_experiment, run_experiment
 
@@ -29,6 +30,8 @@ def main() -> None:
         run_rhythm_experiment(ROOT, cfg)
     elif name == "dilated_meanmax":
         run_meanmax_experiment(ROOT, cfg)
+    elif name == "dilated_outlier":
+        run_outlier_experiment(ROOT, cfg)
     else:
         run_experiment(ROOT, cfg)
 
